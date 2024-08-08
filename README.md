@@ -3,6 +3,31 @@
 Disclaimer: **Esta herramienta solo funciona en la máquina prime**
 Esto debido a configuraciones con el login de Microsoft
 
+Cada semestre deben cambiar una línea para que el sistema pueda obtener los horarios del SIGA correctamente:
+
+```
+# /primos_signup_backend/urls.py
+...
+@api.post('/schedule', response={200: Schedule, 400: Detail})
+def get_siga_schedule(_, payload: Credentials):
+    schedule = [[], [], [], [], [], [], []]
+    with Session() as session:
+        # Accedemos al SIGA
+        response = session.post('https://siga.usm.cl/pag/valida_login.jsp', data=payload.dict())
+        if 'error_ingreso_login.jsp' in response.text:
+            return 400, {'detail': 'wrong user/password'}
+        
+        # Solicitamos el horario
+        response = session.post('https://siga.usm.cl/pag/sistinsc/insc_horario_per_detalle.jsp', data={'periodo': '2024-2', 'tipo_inscripcion': 2})
+...
+```
+
+Deben actualizar la última línea que se ve en el código anterior y poner el periodo correspondiente:
+
+```
+response = session.post('https://siga.usm.cl/pag/sistinsc/insc_horario_per_detalle.jsp', data={'periodo': '<PERIODO>', 'tipo_inscripcion': 2})
+```
+
 ### Instalación
 Una vez en prime ejecutar:
 ```

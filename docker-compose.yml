@@ -11,7 +11,7 @@ services:
       - POSTGRES_NAME=primos-signup-backend
     deploy:
       restart_policy:
-        condition: on-failure
+        condition: unless-stopped
         delay: 30s
         window: 120s
     depends_on:
@@ -27,5 +27,6 @@ services:
       - POSTGRES_DB=primos-signup-backend
     ports:
       - 5433:5432
+    restart: unless-stopped
 volumes:
   data:

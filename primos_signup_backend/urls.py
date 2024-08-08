@@ -45,7 +45,7 @@ def get_siga_schedule(_, payload: Credentials):
             return 400, {'detail': 'wrong user/password'}
         
         # Solicitamos el horario
-        response = session.post('https://siga.usm.cl/pag/sistinsc/insc_horario_per_detalle.jsp', data={'periodo': '2024-1', 'tipo_inscripcion': 2})
+        response = session.post('https://siga.usm.cl/pag/sistinsc/insc_horario_per_detalle.jsp', data={'periodo': '2024-2', 'tipo_inscripcion': 2})
 
         # Scrapping
         soup = BeautifulSoup(response.text, 'html.parser')
