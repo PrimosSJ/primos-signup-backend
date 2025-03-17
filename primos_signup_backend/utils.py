@@ -1,7 +1,7 @@
 from re import findall
 
 days = 'lmxjv'
-num_blocks = 8
+num_blocks = 7
 schedule_regex = fr'([{days}](?:[0-{num_blocks - 1}],)*[0-{num_blocks - 1}])'
 
 def parse_schedule(schedule):
