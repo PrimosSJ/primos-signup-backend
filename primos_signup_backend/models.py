@@ -9,3 +9,5 @@ class Primo(Model):
 
     bussy_schedule = CharField(max_length=100)
     desire_schedule = CharField(max_length=100)
+    
+    new = BooleanField(default=False)

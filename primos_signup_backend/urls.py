@@ -1,3 +1,4 @@
+
 from typing import List
 
 from django.contrib import admin
@@ -45,7 +46,7 @@ def get_siga_schedule(_, payload: Credentials):
             return 400, {'detail': 'wrong user/password'}
         
         # Solicitamos el horario
-        response = session.post('https://siga.usm.cl/pag/sistinsc/insc_horario_per_detalle.jsp', data={'periodo': '2025-1', 'tipo_inscripcion': 2})
+        response = session.post('https://siga.usm.cl/pag/sistinsc/insc_horario_per_detalle.jsp', data={'periodo': '2026-2', 'tipo_inscripcion': 2})
 
         # Scrapping
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -56,6 +57,9 @@ def get_siga_schedule(_, payload: Credentials):
             for i, block in enumerate(blocks):
                 activity = block.select_one('td > table > tr > td')
                 schedule[i].append(activity.has_attr('onmouseover'))
+
+        for s in schedule:
+          s.insert(4, False)
 
         return 200, {
             'schedule': [item for sublist in map(lambda block: block[:utils.num_blocks], schedule[:5]) for item in sublist]
@@ -74,16 +78,28 @@ def get_registered_schedule(_, rol: int):
 
 @api.post('/register', response={200: None, 400: Detail})
 def submit(_, payload: RegisterForm):
-    if (len(payload.bussy_schedule) != 40 or len(payload.desire_schedule) != 40):
-        return 400, {'detail': 'schedule arrays must have 40 items each'}
-    
-    transformations = {
-        'bussy_schedule': utils.parse_schedule(payload.bussy_schedule),
-        'desire_schedule': utils.parse_schedule(payload.desire_schedule),
-    }
-    Primo.objects.update_or_create(rol=str(payload.rol), defaults=payload.dict() | transformations)
+    try:
+      if (len(payload.bussy_schedule) != 45 or len(payload.desire_schedule) != 45):
+          return 400, {'detail': 'schedule arrays must have 45 items each'}
 
-    return 200, None
+      # --- MINIMO DE BLOQUES DISPONIBLES ---
+      if sum(payload.desire_schedule) < 6:
+        return 400, {'detail': 'Debes seleccionar al menos 6 bloques deseados/disponibles'}
+      # ------------------------------------  
+
+      
+      payload_dict = payload.dict()
+
+      payload_dict['bussy_schedule'] = utils.parse_schedule(payload.bussy_schedule)
+      payload_dict['desire_schedule'] = utils.parse_schedule(payload.desire_schedule)
+      payload_dict['new'] = 'False'
+
+      Primo.objects.update_or_create(rol=str(payload.rol), defaults=payload_dict)
+
+      return 200, None
+    except Exception as err:
+      print(err)
+      return 500, None
 
 urlpatterns = [
     path('admin/', admin.site.urls),
