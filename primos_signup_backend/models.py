@@ -1,7 +1,7 @@
 from django.db.models import *
 
 class Primo(Model):
-    rol = IntegerField(primary_key=True)
+    rol = CharField(primary_key=True, max_length=11)
     mail = CharField(unique=True, max_length=100)
     
     name = CharField(max_length=100)

@@ -94,7 +94,7 @@ def submit(_, payload: RegisterForm):
       payload_dict['desire_schedule'] = utils.parse_schedule(payload.desire_schedule)
       payload_dict['new'] = 'False'
 
-      Primo.objects.update_or_create(rol=str(payload.rol), defaults=payload_dict)
+      Primo.objects.update_or_create(rol=payload.rol, defaults=payload_dict)
 
       return 200, None
     except Exception as err:
