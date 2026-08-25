@@ -35,6 +35,8 @@ class RegisterForm(Schema):
     nick: str
     bussy_schedule: List[bool]
     desire_schedule: List[bool]
+    new: bool
+    coordinator: bool
 
 @api.post('/schedule', response={200: Schedule, 400: Detail})
 def get_siga_schedule(_, payload: Credentials):
@@ -92,7 +94,6 @@ def submit(_, payload: RegisterForm):
 
       payload_dict['bussy_schedule'] = utils.parse_schedule(payload.bussy_schedule)
       payload_dict['desire_schedule'] = utils.parse_schedule(payload.desire_schedule)
-      payload_dict['new'] = 'False'
 
       Primo.objects.update_or_create(rol=payload.rol, defaults=payload_dict)
 

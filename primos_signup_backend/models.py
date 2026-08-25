@@ -11,3 +11,4 @@ class Primo(Model):
     desire_schedule = CharField(max_length=100)
     
     new = BooleanField(default=False)
+    coordinator = BooleanField(default=False)
