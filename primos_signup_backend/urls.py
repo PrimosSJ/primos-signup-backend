@@ -84,12 +84,6 @@ def submit(_, payload: RegisterForm):
       if (len(payload.bussy_schedule) != 45 or len(payload.desire_schedule) != 45):
           return 400, {'detail': 'schedule arrays must have 45 items each'}
 
-      # --- MINIMO DE BLOQUES DISPONIBLES ---
-      if sum(payload.desire_schedule) < 6:
-        return 400, {'detail': 'Debes seleccionar al menos 6 bloques deseados/disponibles'}
-      # ------------------------------------  
-
-      
       payload_dict = payload.dict()
 
       payload_dict['bussy_schedule'] = utils.parse_schedule(payload.bussy_schedule)
